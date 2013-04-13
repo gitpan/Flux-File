@@ -36,4 +36,4 @@ requires:
   autodie: 0
 resources:
   repository: git://github.com/berekuk/Flux-File.git
-version: 1.00
+version: 1.01

@@ -1,6 +1,6 @@
 package Flux::File::Cursor;
 {
-  $Flux::File::Cursor::VERSION = '1.00';
+  $Flux::File::Cursor::VERSION = '1.01';
 }
 
 use Moo;
@@ -64,7 +64,7 @@ Flux::File::Cursor - file cursor
 
 =head1 VERSION
 
-version 1.00
+version 1.01
 
 =head1 AUTHOR
 

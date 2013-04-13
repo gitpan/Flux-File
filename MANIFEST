@@ -12,3 +12,5 @@ t/file.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/storage/file
+tfiles/file
+tfiles/storage

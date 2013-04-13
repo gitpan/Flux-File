@@ -12,7 +12,6 @@ use lib 'lib';
 use autodie qw(:all);
 
 use Flux::File;
-use Flux::File::Cursor;
 
 use Time::HiRes qw(sleep);
 
@@ -29,7 +28,7 @@ sub _storage {
 sub _stream {
     my $self = shift;
     my $storage = $self->_storage;
-    return $storage->in(Flux::File::Cursor->new(posfile => "tfiles/pos"));
+    return $storage->in("tfiles/pos");
 }
 
 sub commit :Test(3) {
@@ -78,7 +77,7 @@ sub writing :Test(3) {
     $storage->write_chunk(["zzz1\n", "zzz2\n"]);
     $storage->commit;
 
-    my $stream = $storage->in(Flux::File::Cursor->new(posfile => "tfiles/storage.pos"));
+    my $stream = $storage->in("tfiles/storage.pos");
     is($stream->read, "xxx\n");
     is_deeply(scalar($stream->read_chunk(2)), ["yyy\n", "zzz1\n"]);
     is($stream->read, "zzz2\n");
@@ -108,7 +107,7 @@ sub atomic($$) {
             }
         }
     }
-    my $in = $storage->in(Flux::File::Cursor->new(posfile => "$file.pos"));
+    my $in = $storage->in("$file.pos");
     while (my $in_line = $in->read) {
         $in_line eq $line or die "invalid line in $file";
     }
@@ -132,7 +131,7 @@ sub commit_after_incomplete_line :Tests(4) {
     print {$fh} "abc\n";
     print {$fh} "def";
     $fh->flush;
-    my $gen_in = sub { Flux::File->new('tfiles/file')->in(Flux::File::Cursor->new(posfile => 'tfiles/pos')) };
+    my $gen_in = sub { Flux::File->new('tfiles/file')->in('tfiles/pos') };
 
     {
         my $in = $gen_in->();
@@ -159,7 +158,7 @@ sub commit_after_incomplete_line :Tests(4) {
 sub lag :Test(5) {
     my $self = shift;
     my $out = Flux::File->new('tfiles/file');
-    my $in = $out->in(Flux::File::Cursor->new(posfile => 'tfiles/pos'));
+    my $in = $out->in('tfiles/pos');
     ok($in->does('Flux::In::Role::Lag'), "role");
 
     is($in->lag(), 25, "simple lag");
@@ -167,7 +166,7 @@ sub lag :Test(5) {
     is($in->lag(), 15, "uncommited lag");
     $in->commit;
     is($in->lag(), 15, "commited lag");
-    $in = $out->in(Flux::File::Cursor->new(posfile => 'tfiles/pos'));
+    $in = $out->in('tfiles/pos');
     $out->write("blah\n");
     $out->commit;
     is($in->lag(), 20, "realtime lag");
@@ -198,7 +197,7 @@ sub truncate_test : Test(8) {
         $out->commit;
 
         my $content;
-        my $in = $out->in(Flux::File::Cursor->new(posfile => 'tfiles/trunkate_file.pos'));
+        my $in = $out->in('tfiles/trunkate_file.pos');
         while (my $l = $in->read) {
             $content .= $l;
         }

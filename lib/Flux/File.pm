@@ -1,6 +1,6 @@
 package Flux::File;
 {
-  $Flux::File::VERSION = '1.00';
+  $Flux::File::VERSION = '1.01';
 }
 
 # ABSTRACT: file storage
@@ -22,6 +22,7 @@ use Fcntl qw(SEEK_SET SEEK_CUR SEEK_END);
 use IO::Handle;
 use Lock::File qw(lockfile);
 use Flux::File::In;
+use Flux::File::Cursor;
 
 use autodie;
 
@@ -234,9 +235,9 @@ sub commit {
 
 sub in {
     my $self = shift;
-    my ($cursor) = validate_pos(@_, {isa => 'Flux::File::Cursor'});
+    my ($posfile) = validate_pos(@_, SCALAR);
 
-    return Flux::File::In->new(cursor => $cursor, file => $self->file);
+    return Flux::File::In->new(cursor => Flux::File::Cursor->new(posfile => $posfile), file => $self->file);
 }
 
 sub owner {
@@ -262,7 +263,7 @@ Flux::File - file storage
 
 =head1 VERSION
 
-version 1.00
+version 1.01
 
 =head1 SYNOPSIS
 
@@ -318,9 +319,9 @@ Write a new line into the file.
 
 Write multiple lines into the file.
 
-=item B<in($cursor)>
+=item B<in($posfile)>
 
-Construct stream object from an L<Flux::File::Cursor> object.
+Construct the input stream which reads the file starting from the position saved in C<$posfile>.
 
 =back
 

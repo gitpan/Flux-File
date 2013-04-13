@@ -1,6 +1,6 @@
 package Flux::File::In;
 {
-  $Flux::File::In::VERSION = '1.00';
+  $Flux::File::In::VERSION = '1.01';
 }
 
 # ABSTRACT: input stream from any plain-text line-based file.
@@ -129,7 +129,7 @@ Flux::File::In - input stream from any plain-text line-based file.
 
 =head1 VERSION
 
-version 1.00
+version 1.01
 
 =head1 DESCRIPTION
 
